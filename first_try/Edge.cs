@@ -5,11 +5,11 @@
         public int from;
         public int to;
         public int id;
-        public Edge(int From, int To, int id_edge)
+        public Edge(int From, int To, int idEdge)
         {
             from = From;
             to = To;
-            id = id_edge;
+            id = idEdge;
         }
     }
 }

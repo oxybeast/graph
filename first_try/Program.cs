@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections.Generic; 
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,67 +8,64 @@ namespace first_try
 {
     class Program
     {
-        public List<Edge>[] graph;
-        //public List<List<Edge>> paths;
+        public List<Edge>[] Graph;
+        //public List<List<Edge>> paths;jfjkfghkfgkf
         
-        public int maximumLengthOfPath = 4;
+        public int MaximumLengthOfPath = 4;
         public void ReadDataAndSetGraph()
         {
-            StreamReader input = new StreamReader(@"input.txt");
-            string[] buffer = input.ReadLine().Split(' ');
+            var input = new StreamReader(@"input.txt");
+            var buffer = input.ReadLine().Split(' ');
 
-            int CountOfVertex = Convert.ToInt32(buffer[0]);
-            int CountOfEdges = Convert.ToInt32(buffer[1]);
+            var countOfVertex = Convert.ToInt32(buffer[0]);
+            var countOfEdges = Convert.ToInt32(buffer[1]);
 
-            graph = new List<Edge>[CountOfVertex];
-            for(int i = 0; i < CountOfVertex; ++i)
+            Graph = new List<Edge>[countOfVertex];
+            for(var i = 0; i < countOfVertex; ++i)
             {
-                graph[i] = new List<Edge>();
+                Graph[i] = new List<Edge>();
             }
-            for (int i = 0; i < CountOfEdges; ++i)
+            for (var i = 0; i < countOfEdges; ++i)
             {
                 buffer = input.ReadLine().Split(' ');
-                int from, to, id;
-                from = Convert.ToInt32(buffer[0]);
-                to = Convert.ToInt32(buffer[1]);
-                id = Convert.ToInt32(buffer[2]);
-                Edge to_add = new Edge(from, to, id);
-                graph[from].Add(to_add);
+                var @from = Convert.ToInt32(buffer[0]);
+                var to = Convert.ToInt32(buffer[1]);
+                var id = Convert.ToInt32(buffer[2]);
+                var toAdd = new Edge(from, to, id);
+                Graph[from].Add(toAdd);
             }
             input.Close();
         }
         public List<Edge> [,] GetArrayWithPath(int start, int finish)
         {
-            List<Edge>[,] allInputEdges;
+            var bfsQueue = new Queue<VertexInQueue>();
 
-            Queue<VertexInQueue> bfsQueue = new Queue<VertexInQueue>();
+            var usedVertex = new bool[Graph.Length, MaximumLengthOfPath + 1];
 
-            bool[,] used_vertex = new bool[graph.Length, maximumLengthOfPath + 1];
+            var allInputEdges = new List<Edge>[Graph.Length, MaximumLengthOfPath + 1];
 
-            allInputEdges = new List<Edge>[graph.Length, maximumLengthOfPath + 1];
-
-            for (int i = 0; i < graph.Length; ++i)
+            for (var i = 0; i < Graph.Length; ++i)
             {
-                for (int j = 0; j < maximumLengthOfPath + 1; ++j)
+                for (var j = 0; j < MaximumLengthOfPath + 1; ++j)
                     allInputEdges[i, j] = new List<Edge>();
             }
 
-            used_vertex[start, 0] = true;
+            usedVertex[start, 0] = true;
             bfsQueue.Enqueue(new VertexInQueue(start, 0));
 
             while (bfsQueue.Count > 0)
             {
-                VertexInQueue current = bfsQueue.Dequeue();
+                var current = bfsQueue.Dequeue();
 
-                if (current.turn == maximumLengthOfPath)
+                if (current.turn == MaximumLengthOfPath)
                     continue;
 
-                foreach(Edge edge in graph[current.idVert])
+                foreach(var edge in Graph[current.idVert])
                 {
-                    if(used_vertex[edge.to, current.turn + 1] == false)
+                    if(usedVertex[edge.to, current.turn + 1] == false)
                     {
                         bfsQueue.Enqueue(new VertexInQueue(edge.to, current.turn + 1));
-                        used_vertex[edge.to, current.turn + 1] = true;
+                        usedVertex[edge.to, current.turn + 1] = true;
                     }
                     allInputEdges[edge.to, current.turn + 1].Add(edge);
                 }
@@ -80,35 +77,35 @@ namespace first_try
         
         public List<List<Edge>>  GetPathInGoodForm(List<Edge> [,] allInputEdges, int finishVertex)
         {
-            List<Edge> temp_path = new List<Edge>();
-            List<List<Edge>> result = new List<List<Edge>>();
+            var tempPath = new List<Edge>();
+            var result = new List<List<Edge>>();
 
-            void Get_ans(int id_vertex, int turns)
+            void GetAns(int idVertex, int turns)
             {
                 if (turns == 0)
                 {
-                    result.Add(new List<Edge>(temp_path));
+                    result.Add(new List<Edge>(tempPath));
                     return;
                 }
-                foreach (Edge edge in allInputEdges[id_vertex, turns])
+                foreach (var edge in allInputEdges[idVertex, turns])
                 {
-                    temp_path.Add(edge);
-                    Get_ans(edge.from, turns - 1);
-                    temp_path.Remove(temp_path.Last());
+                    tempPath.Add(edge);
+                    GetAns(edge.from, turns - 1);
+                    tempPath.Remove(tempPath.Last());
                 }
             }
 
-            for (int lengthOfPath = maximumLengthOfPath; lengthOfPath > 0; lengthOfPath--)
+            for (var lengthOfPath = MaximumLengthOfPath; lengthOfPath > 0; lengthOfPath--)
             {
-                 Get_ans(finishVertex, lengthOfPath);
+                 GetAns(finishVertex, lengthOfPath);
             }
 
             return result;
         }
         void Output_data(List<List<Edge>> paths, int startVertex)
         {
-            StreamWriter output = new StreamWriter(@"output.txt");
-            foreach (List<Edge> currentPath in paths)
+            var output = new StreamWriter(@"output.txt");
+            foreach (var currentPath in paths)
             {
                 currentPath.Reverse();
 
@@ -116,7 +113,7 @@ namespace first_try
                 output.Write(startVertex);
                 output.Write(") ");
 
-                foreach (Edge currentEdge in currentPath)
+                foreach (var currentEdge in currentPath)
                 {
                     output.Write("id_");
                     output.Write(currentEdge.id);
@@ -133,7 +130,7 @@ namespace first_try
         {
             Program Q = new Program();
             int k1 = 0, k2 = 4;
-            Q.maximumLengthOfPath = 4;
+            Q.MaximumLengthOfPath = 4;
             Q.ReadDataAndSetGraph();
             //Q.Get_array_with_path(k1, k2);
             Q.Output_data(Q.GetPathInGoodForm(Q.GetArrayWithPath(k1, k2), k2), k1);
