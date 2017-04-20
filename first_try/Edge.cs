@@ -1,15 +1,17 @@
-﻿namespace first_try
+﻿using System;
+
+namespace first_try
 {
-    class Edge
+    public class Edge
     {
-        public int from;
-        public int to;
-        public int id;
-        public Edge(int From, int To, int idEdge)
+        public int From { get; set; }
+        public int To { get; set; }
+        public int Id { get; set; }
+        public Edge(int @from, int to, int idEdge)
         {
-            from = From;
-            to = To;
-            id = idEdge;
+            this.From = @from;
+            this.To = to;
+            Id = idEdge;
         }
     }
 }

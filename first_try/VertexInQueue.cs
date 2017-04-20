@@ -2,12 +2,12 @@
 {
     class VertexInQueue
     {
-        public int idVert;
-        public int turn;
+        public int IdVert;
+        public int Turn;
         public VertexInQueue(int idVertex, int lengthFromStartToThis)
         {
-            idVert = idVertex;
-            turn = lengthFromStartToThis;
+            IdVert = idVertex;
+            Turn = lengthFromStartToThis;
         }
     }
 }
