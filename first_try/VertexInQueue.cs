@@ -1,4 +1,4 @@
-﻿namespace first_try
+﻿namespace GraphSolver
 {
     class VertexInQueue
     {

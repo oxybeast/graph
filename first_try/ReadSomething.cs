@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace first_try
+namespace GraphSolver
 {
     public class ReadSomething
     {
@@ -22,7 +22,7 @@ namespace first_try
             return result;
         }
 
-        public static Edge ReadEdge(StreamReader input)
+        private static Edge ReadEdge(StreamReader input)
         {
             var buffer = input.ReadLine().Split(' ');       
             var from = Convert.ToInt32(buffer[0]);

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace first_try
+﻿namespace GraphSolver
 {
     public class Edge
     {
