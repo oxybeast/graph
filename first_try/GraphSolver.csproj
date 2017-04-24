@@ -54,7 +54,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DoSomethingWithPaths.cs" />
+    <Compile Include="SievePaths.cs" />
     <Compile Include="Edge.cs" />
     <Compile Include="Graph.cs" />
     <Compile Include="Path.cs" />

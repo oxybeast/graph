@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace GraphSolver
 {
@@ -68,6 +69,15 @@ namespace GraphSolver
                 if (BadEdges.Contains(currentElement) == true)
                     ifPathDoesntContainsBadEdges = false;
             return ifPathDoesntContainsBadEdges;
+        }
+
+        public IEnumerable<Path>  CheckAllCondition(params Path[] paths)
+        {
+            foreach (var path in paths)
+            {
+                if (CheckAllCondition(path))
+                    yield return path;
+            }
         }
 
         public bool CheckAllCondition(Path path)

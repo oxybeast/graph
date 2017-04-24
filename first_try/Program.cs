@@ -8,21 +8,30 @@ namespace GraphSolver
     {
         public void SolveGraphProblem(string inputGoodEdges, string inputBadEdges, string inputGoodVertex, string inputBadVertex)
         {
+
             
+
+
             var currentGraph = new Graph("input.txt");
-            var thePathFinder = new PathFinder(0,4,4);
+
+
+            var thePathFinder = new PathFinder(0, 4, 4);
             thePathFinder.GetAllPaths(currentGraph);
+
             var conditionOnPath =
                 new SievePaths(inputGoodVertex, inputBadVertex, inputBadEdges, inputGoodEdges);
+
             List<List<Edge>> resultPaths = new List<List<Edge>>();
+
             foreach (var path in thePathFinder.AllPaths)
             {
                 if(conditionOnPath.CheckAllCondition(path) == true)
                     resultPaths.Add(new List<Edge>(path.OnePath));
             }
-            Output_data(resultPaths);
+
+            OutputData(resultPaths);
         }
-        public void Output_data(List<List<Edge>> paths)
+        public void OutputData(List<List<Edge>> paths)
         {
             
             var output = new StreamWriter(@"output.txt");

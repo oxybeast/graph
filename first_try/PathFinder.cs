@@ -20,11 +20,11 @@ namespace GraphSolver
         {
             var bfsQueue = new Queue<VertexInQueue>();
 
-            var usedVertex = new bool[currentGraph.graph.Length, MaximumLengthOfPaths + 1];
+            var usedVertex = new bool[currentGraph.Count, MaximumLengthOfPaths + 1];
 
-            ArrayOfPaths = new List<Edge>[currentGraph.graph.Length, MaximumLengthOfPaths + 1];
+            ArrayOfPaths = new List<Edge>[currentGraph.Count, MaximumLengthOfPaths + 1];
 
-            for (var i = 0; i < currentGraph.graph.Length; ++i)
+            for (var i = 0; i < currentGraph.Count; ++i)
             for (var j = 0; j < MaximumLengthOfPaths + 1; ++j)
                 ArrayOfPaths[i, j] = new List<Edge>();
 
@@ -38,7 +38,7 @@ namespace GraphSolver
                 if (current.Turn == MaximumLengthOfPaths)
                     continue;
 
-                foreach (var edge in currentGraph.graph[current.IdVert])
+                foreach (var edge in currentGraph.GetEdgesByVertexId(current.IdVert))
                 {
                     if (usedVertex[edge.To, current.Turn + 1] == false)
                     {
