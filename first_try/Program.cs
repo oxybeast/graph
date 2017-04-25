@@ -43,8 +43,7 @@ namespace GraphSolver
             {
                 foreach (var currentPath in paths)
                 {
-                    var startVertex = currentPath.Last().From;
-                    currentPath.Reverse();
+                    var startVertex = currentPath[0].From;
                     output.Write("(");
                     output.Write(startVertex);
                     output.Write(") ");

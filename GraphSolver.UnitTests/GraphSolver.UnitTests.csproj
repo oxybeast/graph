@@ -63,6 +63,7 @@
     <Compile Include="CompareSomething.cs" />
     <Compile Include="GraphUnitTests.cs" />
     <Compile Include="PathFinderUnitTest.cs" />
+    <Compile Include="PathUnitTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SievePathsUnitTests.cs" />
   </ItemGroup>
