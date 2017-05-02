@@ -10,26 +10,12 @@ namespace GraphSolver.UnitTests
 {
     public class GraphUnitTests
     {
-        [Fact]
-        public void EmptyGraph_ThrowsException()
-        {
-            Assert.Throws<ArgumentException>(() => new Graph(""));
-            //Assert.Same(0, graph.Count);
-        }
+        
         [Fact]
         public void EmptyGraph_Zero()//чяднт?
         {
             var g = new Graph();
             Assert.Equal(0, g.Count);
-            //Assert.Same((int)0, g.Count);
-        }
-
-        [Fact]
-        public void EmptyListForEdge_EmptyList()
-        {
-            var a = new List<Edge>[3];
-            var g = new Graph(a);
-            Assert.Equal(new List<Edge>(), g.GetEdgesByVertexId(0));
         }
 
         [Fact]
@@ -40,36 +26,91 @@ namespace GraphSolver.UnitTests
         }
 
         [Fact]
-        public void AddEdgeWithNonPositiveVertex_NoChanges()
+        public void AddedVertex_IdNotEqualsNegOne()
         {
-            var g = new Graph();
-            g.AddEdge(new Edge(-1, 2, 3));
-            Assert.Equal(0, g.Count);
+            var vertex = new VertexOfTable("sample", new List<string>());
+            var graph = new Graph();
+            graph.AddVertexIfNonExist(vertex);
+            var flag = -1 != graph.GetIdOfVertex(vertex);
+            Assert.Equal(true, flag);
         }
 
         [Fact]
-        public void AddEdge1_ThisEdgeExistInGraph()
+
+        public void VertexNonAdded_ReturnNegOne()
         {
-            var g = new Graph();
-            var edge = new Edge(0,1,2);
-            g.AddEdge(edge);
-            var flag = g.GetEdgesByVertexId(0).Contains(edge);
-            Assert.Equal(true, flag);
+            var vertex = new VertexOfTable("sample", new List<string>());
+            var graph = new Graph();
+            var flag = -1 != graph.GetIdOfVertex(vertex);
+            Assert.Equal(false, flag);
         }
+
         [Fact]
-        public void AddEdge2_ThisEdgeExistInGraph()
+
+        public void VertexAddedTwice_CountOnlyOnce()
         {
-            var g = new Graph();
-            g.AddEdge(new Edge(0,1,2));
-            g.AddEdge(new Edge(0,2,4));
-            g.AddEdge(new Edge(1,2,3));
-            var edge = new Edge(0, 1, 2);
-            var flag = false;
-            foreach (var currentEdge in g.GetEdgesByVertexId(0))
-            {
-                var comparator = new CompareSomething();
-                flag|=comparator.CompareEdges(currentEdge, edge) == 0;
-            }
+            var vertex = new VertexOfTable("sample", new List<string>());
+            var graph = new Graph();
+            graph.AddVertexIfNonExist(vertex);
+            graph.AddVertexIfNonExist(vertex);
+            Assert.Equal(1, graph.Count);
+        }
+
+        [Fact]
+        public void VertexAdded_ReturnTrueName()
+        {
+            var vertex1 = new VertexOfTable("sample", new List<string>());
+            var vertex2 = new VertexOfTable("sample1", new List<string>());
+            var graph = new Graph();
+            graph.AddVertexIfNonExist(vertex1);
+            var id = graph.GetIdOfVertex(vertex1.GetName());
+            Assert.Equal(vertex1.GetName(), graph.GetNameOfTableById(id));
+        }
+
+        [Fact]
+
+        public void NoEdgeForVertex_ReturnEmptyList()
+        {
+            var vertex1 = new VertexOfTable("sample", new List<string>());
+            var vertex2 = new VertexOfTable("sample1", new List<string>());
+            var graph = new Graph();
+            graph.AddVertexIfNonExist(vertex1);
+            graph.AddVertexIfNonExist(vertex2);
+            Assert.Equal(new List<Edge> (), graph.GetEdgesByVertexId(graph.GetIdOfVertex(vertex1.GetName())));
+        }
+
+        [Fact]
+
+        public void AddedEdge_ReturnEmptyListForEndOfTheEdge()
+        {
+            var vertex1 = new VertexOfTable("sample", new List<string>());
+            var vertex2 = new VertexOfTable("sample1", new List<string>());
+            var graph = new Graph();
+            graph.AddVertexIfNonExist(vertex1);
+            graph.AddVertexIfNonExist(vertex2);
+            graph.AddEdgeIfVertexExist("sample", "sample1", 0);
+            Assert.Equal(new List<Edge> (), graph.GetEdgesByVertexId(graph.GetIdOfVertex("sample1")));
+        }
+
+        [Fact]
+
+        public void Added2EdgesForOneVertex_ReturnBoth()
+        {
+            var vertex1 = new VertexOfTable("sample", new List<string>());
+            var vertex2 = new VertexOfTable("sample1", new List<string>());
+            var graph = new Graph();
+            graph.AddVertexIfNonExist(vertex1);
+            graph.AddVertexIfNonExist(vertex2);
+            graph.AddEdgeIfVertexExist("sample", "sample1", 0);
+            graph.AddEdgeIfVertexExist("sample", "sample1", 1);
+            var id1 = graph.GetIdOfVertex("sample");
+            var id2 = graph.GetIdOfVertex("sample1");
+            var outputList = new List<Edge>(graph.GetEdgesByVertexId( graph.GetIdOfVertex("sample")));
+            var goodList = new List<Edge>{new Edge(id1, id2, 0), new Edge(id1, id2, 1) };
+            var comp = new CompareSomething();
+            goodList.Sort(comp.CompareEdges);
+            outputList.Sort(comp.CompareEdges);
+            var flag = comp.CompareListEdges(outputList, goodList) == 0;
             Assert.Equal(true, flag);
         }
     }

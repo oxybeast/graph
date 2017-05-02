@@ -5,31 +5,33 @@ namespace GraphSolver
 {
     public class PathFinder
     {
-        public List<Path> AllPaths;
+        private List<Path> AllPaths;
         private List<Edge>[,] _arrayOfPaths;
-        public int StartVertex, FinishVertex, MaximumLengthOfPaths;
+        private int StartVertex, FinishVertex, MaximumLengthOfPaths;
+        private Graph _graph;
 
-        public PathFinder(int start, int finish, int maximumLength)
+        public PathFinder(string tableFrom, string tableTo, int maximumLength, Graph graph)
         {
-            StartVertex = start;
-            FinishVertex = finish;
+            _graph = graph;
+            StartVertex = graph.GetIdOfVertex(tableFrom);
+            FinishVertex = graph.GetIdOfVertex(tableTo);
             MaximumLengthOfPaths = maximumLength;
         }
 
-        private void GetArrayOfPaths(Graph currentGraph)
+        private void GetArrayOfPaths()
         {
 
             var bfsQueue = new Queue<VertexInQueue>();
 
-            var usedVertex = new bool[currentGraph.Count, MaximumLengthOfPaths + 1];
+            var usedVertex = new bool[_graph.Count, MaximumLengthOfPaths + 1];
 
-            _arrayOfPaths = new List<Edge>[currentGraph.Count, MaximumLengthOfPaths + 1];
+            _arrayOfPaths = new List<Edge>[_graph.Count, MaximumLengthOfPaths + 1];
 
-            for (var i = 0; i < currentGraph.Count; ++i)
+            for (var i = 0; i < _graph.Count; ++i)
             for (var j = 0; j < MaximumLengthOfPaths + 1; ++j)
                 _arrayOfPaths[i, j] = new List<Edge>();
 
-            if (currentGraph.Count <= StartVertex || StartVertex < 0)
+            if (_graph.Count <= StartVertex || StartVertex < 0)
                 return;
 
             usedVertex[StartVertex, 0] = true;
@@ -44,7 +46,7 @@ namespace GraphSolver
                 if (current.Turn == MaximumLengthOfPaths)
                     continue;
 
-                foreach (var edge in currentGraph.GetEdgesByVertexId(current.IdVert))
+                foreach (var edge in _graph.GetEdgesByVertexId(current.IdVert))
                 {
                     if (usedVertex[edge.To, current.Turn + 1] == false)
                     {
@@ -55,37 +57,41 @@ namespace GraphSolver
                 }
             }
         }
+
+        private List<Edge> _tempPath;
+        private void GetAns(int idVertex, int turns)
+        {
+            if (turns == 0)
+            {
+                _tempPath.Reverse();
+                AllPaths.Add(new Path(_tempPath));
+                _tempPath.Reverse();
+                return;
+            }
+            foreach (var edge in _arrayOfPaths[idVertex, turns])
+            {
+                _tempPath.Add(edge);
+                GetAns(edge.From, turns - 1);
+                _tempPath.RemoveAt(_tempPath.Count - 1);
+            }
+        }
         private void GetPathsInGoodForm()
         {
-            var tempPath = new List<Edge>();
+            _tempPath = new List<Edge>();
             AllPaths = new List<Path>();
             if (FinishVertex < 0 || FinishVertex >= (_arrayOfPaths.Length)/(MaximumLengthOfPaths+1))
                 return;
-            void GetAns(int idVertex, int turns)
-            {
-                if (turns == 0)
-                {
-                    tempPath.Reverse();
-                    AllPaths.Add(new Path(tempPath));
-                    tempPath.Reverse();
-                    return;
-                }
-                foreach (var edge in _arrayOfPaths[idVertex, turns])
-                {
-                    tempPath.Add(edge);
-                    GetAns(edge.From, turns - 1);
-                    tempPath.Remove(tempPath.Last());
-                }
-            }
+            
 
             for (var lengthOfPath = MaximumLengthOfPaths; lengthOfPath > 0; lengthOfPath--)
                 GetAns(FinishVertex, lengthOfPath);
         }
 
-        public void GetAllPaths(Graph currentGraph)
+        public List<Path> GetAllPaths()
         {
-            GetArrayOfPaths(currentGraph);
+            GetArrayOfPaths();
             GetPathsInGoodForm();
+            return new List<Path>(AllPaths);
         }
 
     }

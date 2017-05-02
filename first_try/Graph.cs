@@ -9,65 +9,68 @@ namespace GraphSolver
     public class Graph
     {
         private List<List<Edge>> _graph;
-        private Dictionary<int, int> _idDictionary;
+        private List<VertexOfTable> _nodes;
+        private Dictionary<string, int> _idDictionary;
+        private Dictionary<int, string> _nameOfId;
         private int _countVertex;
 
         public Graph()
         {
             _graph = new List<List<Edge>>();
-            _idDictionary.Clear();
+            _idDictionary = new Dictionary<string, int>();
+            _nameOfId = new Dictionary<int, string>();
+            _nodes = new List<VertexOfTable>();
             _countVertex = 0;
         }
-
-        public void AddEdge(Edge edge)
+        public string GetNameOfTableById(int id)
         {
-            var max = Math.Max(edge.From, edge.To);
-            var min = Math.Min(edge.From, edge.To);
+            return _nameOfId[id];
+        }
+        public int GetIdOfVertex(VertexOfTable vertex)
+        {
+            var name = vertex.GetName();
+            if (_idDictionary.ContainsKey(name))
+                return _idDictionary[name];
+            else
+                return -1;
+        }
+        public int GetIdOfVertex(string nameOfTable)
+        {
+            if (_idDictionary.ContainsKey(nameOfTable))
+                return _idDictionary[nameOfTable];
+            else
+                return -1;
+        }
+        public void AddVertexIfNonExist(VertexOfTable vertex)
+        {
+            var nameOfTable = vertex.GetName();
+            if (_idDictionary.ContainsKey(nameOfTable)) return;
 
-            if (min < 0)
-                return;
+            _idDictionary[nameOfTable] = _countVertex;
+            _nameOfId[_idDictionary[nameOfTable]] = nameOfTable;
 
-            if(max >= _countVertex)
-                while (max >= _countVertex)
-                {
-                    _countVertex++;
-                    _graph.Add(new List<Edge>());
-                }
+            _graph.Add(new List<Edge>());
+            _nodes.Add(vertex);
+            _countVertex++;
+        }
+        public void AddEdge(VertexOfTable tableFrom, VertexOfTable tableTo, int id)
+        {
+            AddVertexIfNonExist(tableFrom);
+            AddVertexIfNonExist(tableTo);
+            var edge = new Edge(_idDictionary[tableFrom.GetName()], _idDictionary[tableTo.GetName()], id);
+            AddEdge(edge);
+        }
+        public void AddEdgeIfVertexExist(string tableFrom, string tableTo, int edgeId)
+        {
+            var idFrom = GetIdOfVertex(tableFrom);
+            var idTo = GetIdOfVertex(tableTo);
+            if (idFrom == -1 || idTo == -1) return;
+            var edge = new Edge(idFrom, idTo, edgeId);
+            AddEdge(edge);
+        }
+        private void AddEdge(Edge edge)
+        {
             _graph[edge.From].Add(edge);
-            return;
-        }
-
-        public Graph(string inputFile)
-        {
-            ReadGraph(inputFile);
-        }
-
-        public Graph(List<List<Edge>> graph)
-        {
-            _graph = new List<List<Edge>>();
-            _countVertex = 0;
-            for (var i = 0; i < graph.Count; ++i)
-            {
-                _graph[i] = new List<Edge>(graph[i]);
-                _countVertex++;
-            }
-        }
-        public Graph(List<Edge>[] graphInListEdges)
-        {
-            _countVertex = graphInListEdges.Length;
-            _graph = new List<List<Edge>>();
-            for (var i = 0; i < _countVertex; ++i)
-            {
-                _graph.Add(new List<Edge>());
-            }
-            for (var i = 0; i < graphInListEdges.Length;++i)
-                    {
-                        if(graphInListEdges[i] != null)
-                            _graph[i] = new List<Edge>(graphInListEdges[i]);
-                        else
-                            _graph[i] = new List<Edge>();
-                        
-                    }
         }
 
         public int Count
@@ -83,33 +86,6 @@ namespace GraphSolver
                 return new List<Edge>();
         }
 
-        public void ReadGraph(string inputGraph)
-        {
-            using (var input = new StreamReader(@inputGraph))
-            {
-                var buffer = input.ReadLine().Split(' ');
-
-                 
-                var countOfVertex = Convert.ToInt32(buffer[0]);
-                var countOfEdges = Convert.ToInt32(buffer[1]);
-                _countVertex = countOfVertex;
-
-                //_graph = new List<Edge>[countOfVertex];
-                _graph = new List<List<Edge>>();
-                for(var i = 0; i < _countVertex;++i)
-                    _graph.Add(new List<Edge>());
-
-                for (var i = 0; i < countOfEdges; ++i)
-                {
-                    buffer = input.ReadLine().Split(' ');
-                    var @from = Convert.ToInt32(buffer[0]);
-                    var to = Convert.ToInt32(buffer[1]);
-                    var id = Convert.ToInt32(buffer[2]);
-                    var toAdd = new Edge(from, to, id);
-                    _graph[from].Add(toAdd);
-                }
-            }
-        }
     }
     
 }

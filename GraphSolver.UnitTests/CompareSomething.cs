@@ -13,6 +13,21 @@ namespace GraphSolver.UnitTests
                 return 0;
             return 1;
         }
+
+        public int CompareListEdges(List<Edge> List1, List<Edge> List2)
+        {
+            for (var i = 0; i < List1.Count && i < List2.Count; ++i)
+            {
+                var k = CompareEdges(List1[i], List2[i]);
+                if (k != 0)
+                    return k;
+            }
+            if (List1.Count == List2.Count)
+                return 0;
+            if (List1.Count < List2.Count)
+                return -1;
+            return 1;
+        }
         public int ComparePaths(Path path1, Path path2)
         {
             for (var i = 0; i < path1.Length() && i < path2.Length(); ++i)
